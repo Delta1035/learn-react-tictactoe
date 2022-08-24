@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import Welcome from "./pages/Welcome";
 
 // class Square extends React.Component {
 //   // constructor(props) {
@@ -35,24 +36,93 @@ export function Square(props) {
 }
 
 class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-      winner: null,
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     squares: Array(9).fill(null),
+  //     xIsNext: true,
+  //     winner: null,
+  //   };
+  // }
 
   // 性能优化
-  shouldComponentUpdate(nextProps, nextState) {
-    //if(nextState.squares[5] !== this.state.squares[5]){// 当 squares[5] 值改变的时候才发生组件更新, 但是不符合业务逻辑
-    if (nextState.squares !== this.state.squares) {
-      // 只要前面和后面的squares 不相等 就更新组件
-      return true;
-    }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   //if(nextState.squares[5] !== this.state.squares[5]){// 当 squares[5] 值改变的时候才发生组件更新, 但是不符合业务逻辑
+  //   if (nextState.squares !== this.state.squares) {
+  //     // 只要前面和后面的squares 不相等 就更新组件
+  //     return true;
+  //   }
 
-    return false;
+  //   return false;
+  // }
+
+  // handleClick(i) {
+  //   console.log("handleClick" + i);
+  //   const squares = this.state.squares.slice(); // 复制了一份squares数据
+  //   const winner = calculateWinner(this.state.squares);
+  //   if (winner) {
+  //     return;
+  //   } else {
+  //     if (this.state.squares[i] === null) {
+  //       squares[i] = this.state.xIsNext ? "x" : "o";
+  //     }
+
+  //     this.setState({ squares, xIsNext: !this.state.xIsNext });
+  //   }
+  // }
+
+  renderSquare(i) {
+    // 像Square 组件 传递数据 组件类 props 对象 下的value 属性
+    return (
+      <Square
+        value={this.props.squares[i]}
+        onClick={() => {
+          this.props.onClick(i);
+        }}
+      />
+    );
+  }
+
+  render() {
+    let status = "Next player: " + (this.props.xIsNext ? "x" : "o");
+    // const winner = calculateWinner(this.props.squares);
+    // if (winner) {
+    //   // 如果存在胜利者
+    //   status = "Winner is " + winner;
+    // }
+    return (
+      <div>
+        {/* <div className="status">{status}</div>
+        <div className="board-row">
+          {this.renderSquare(0)}
+          {this.renderSquare(1)}
+          {this.renderSquare(2)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(3)}
+          {this.renderSquare(4)}
+          {this.renderSquare(5)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(6)}
+          {this.renderSquare(7)}
+          {this.renderSquare(8)}
+        </div> */}
+        <Welcome></Welcome>
+      </div>
+    );
+  }
+}
+
+class Game extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      history:[{
+        squares:Array(9).fill(null)
+      }],
+      xIsNext:true
+    }
   }
 
   handleClick(i) {
@@ -69,55 +139,13 @@ class Board extends React.Component {
       this.setState({ squares, xIsNext: !this.state.xIsNext });
     }
   }
-
-  renderSquare(i) {
-    // 像Square 组件 传递数据 组件类 props 对象 下的value 属性
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => {
-          this.handleClick(i);
-        }}
-      />
-    );
-  }
-
+  
   render() {
-    let status = "Next player: " + (this.state.xIsNext ? "x" : "o");
-    const winner = calculateWinner(this.state.squares);
-    if (winner) {
-      // 如果存在胜利者
-      status = "Winner is " + winner;
-    }
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
-}
-
-class Game extends React.Component {
-  render() {
+    console.log('history',this.state.history[this.state.history.lenght-1]);
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board xIsNext={this.state.xIsNext} onClick={this.handleClick} squares={this.state.history[this.state.history.lenght-1]} />
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
